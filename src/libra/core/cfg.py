@@ -29,7 +29,7 @@ class Node(metaclass=ABCMeta):
         return self._identifier
 
     @property
-    def stmts(self):
+    def stmts(self) -> List[Statement]:
         return self._stmts
 
     def __eq__(self, other: 'Node'):
