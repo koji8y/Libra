@@ -37,6 +37,8 @@ from libra.abstract_domains.neurify_domain import NeurifyState
 from libra.abstract_domains.symbolic3_domain import Symbolic3State
 from libra.abstract_domains.product_domain import ProductState
 
+from libra.core.statements import Statement
+
 
 rtype = TexprRtype.AP_RTYPE_REAL
 rdir = TexprRdir.AP_RDIR_RND
@@ -513,7 +515,7 @@ class BackwardInterpreter(Interpreter):
             with self.biased.get_lock():
                 self.biased.value += _percent
 
-    def from_node(self, node, initial, join):
+    def from_node(self, node: Node, initial: BiasState, join: bool):
         """Run the backward analysis
 
         :param node: node from which to start the (backward) analysis
@@ -521,9 +523,10 @@ class BackwardInterpreter(Interpreter):
         :param join: whether joins should be performed
         :return: the result of the (backward) analysis (at the beginning of the CFG)
         """
-        state = initial
+        state: BiasState = initial
         if isinstance(node, Function):
-            state = self.semantics.list_semantics(node.stmts, state)
+            self_semantics: BiasBackwardSemantics = self.semantics
+            state = self_semantics.list_semantics(node.stmts, state)
             if state.is_bottom():
                 yield None
             else:
@@ -879,7 +882,7 @@ class BiasBackwardSemantics(DefaultBackwardSemantics):
         state.result = set()
         return state
 
-    def list_semantics(self, stmt, state) -> State:
+    def list_semantics(self, stmt: List[Statement], state: BiasState) -> State:
         state.polka = state.polka.substitute(stmt[0], stmt[1])
         return state
 

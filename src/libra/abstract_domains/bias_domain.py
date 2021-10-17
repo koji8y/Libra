@@ -41,7 +41,7 @@ class BiasState(State):
         for variable in variables:
             r_vars.append(PyVar(variable.name))
         self.environment = PyEnvironment([], r_vars)
-        self.polka = PyPolka(manager, self.environment)
+        self.polka: PyPolka = PyPolka(manager, self.environment)
         # self.mirror = PyPolkaMPQstrict(self.environment)
 
     @copy_docstring(State.bottom)
